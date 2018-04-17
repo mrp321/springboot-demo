@@ -22,7 +22,8 @@ public class UserProvider {
 	public String queryUser(String userId) {
 		return new SQL() {
 			{
-				SELECT("userId, name, pwd, sex, age, pwdRec, pwdErrCout, pwdExpiredDate, lastLoginDate, isLock, version");
+				//SELECT("userId, name, pwd, sex, age, pwdRec, pwdErrCout, pwdExpiredDate, lastLoginDate, isLock, version");
+				SELECT("userId, name, sex, age, pwdErrCout, pwdExpiredDate, lastLoginDate, isLock, version");
 				FROM("user");
 				if (StrUtil.isNotBlank(userId)) {
 					WHERE("userId = #{userId}");
