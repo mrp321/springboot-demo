@@ -60,18 +60,21 @@ public class UserController extends CommController {
 			// 获取操作结果flag
 			int flag = (int) userInfoMap.get("flag");
 			if (flag == Const.USER_FIRST_LOGIN_PLEASE_MODIFY_PWD) {
-				map = this.getFailRtnMap("首次登录,请修改密码");
+				map = this.getFailRtnMap(flag, "首次登录,请修改密码");
 			} else if (flag == Const.USER_IS_LOCKEDIN) {
-				map = this.getFailRtnMap("当前用户已锁定");
-			} else if (flag > 0 || flag == Const.USER_LOGIN_SUCCESS) {
+				map = this.getFailRtnMap(flag, "当前用户已锁定");
+			} else if (flag > 0) {
 				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
-				map = this.getSuccRtnMap("登录成功");
+				map = this.getSuccRtnMap(flag, "登录成功");
 			} else if (flag == Const.USER_PWD_EXPIRED) {
-				map = this.getFailRtnMap("用户密码已过期");
+				map = this.getFailRtnMap(flag, "用户密码已过期, 请修改密码");
+			} else if (flag == Const.USER_WRONG_PWD) {
+				map = this.getFailRtnMap(flag, "用户密码错误");
 			} else {
-				map = this.getFailRtnMap("该用户不存在");
+				map = this.getFailRtnMap(flag, "该用户不存在");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
 			map = this.getFailRtnMap("系统异常");
 		}
@@ -100,6 +103,7 @@ public class UserController extends CommController {
 			}
 			map = this.getSuccRtnMap("用户注销成功");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
 			map = this.getFailRtnMap("系统异常");
 		}
@@ -121,7 +125,7 @@ public class UserController extends CommController {
 	 * @return
 	 */
 	@PostMapping("addUser")
-	public Map<String, Object> addUser(HttpSession session, String userId, String pwd) {
+	public Map<String, Object> addUser(HttpSession session, String userId, String pwd, String name, Integer age) {
 		log.info("添加用户开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId) || StrUtil.isBlank(pwd)) {
@@ -132,7 +136,7 @@ public class UserController extends CommController {
 			if (user == null) {
 				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
 			}
-			int count = this.userService.addUser(userId, pwd);
+			int count = this.userService.addUser(userId, pwd, name, age);
 			if (count > 0) {
 				map = this.getSuccRtnMap("用户添加成功");
 			} else if (count == Const.USER_WITH_USERID_ALREADY_EXISTS) {
@@ -141,6 +145,7 @@ public class UserController extends CommController {
 				map = this.getFailRtnMap("用户添加失败");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
 			map = this.getFailRtnMap("系统异常");
 		}
@@ -178,6 +183,7 @@ public class UserController extends CommController {
 				map = this.getFailRtnMap("用户删除失败");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
 			map = this.getFailRtnMap("系统异常");
 		}
@@ -199,7 +205,7 @@ public class UserController extends CommController {
 	 * @return
 	 */
 	@PostMapping("modiUser")
-	public Map<String, Object> modiUser(HttpSession session, String userId, String pwd) {
+	public Map<String, Object> modiUser(HttpSession session, String userId, String pwd, String name, Integer age) {
 		log.info("修改用户开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId)) {
@@ -210,13 +216,17 @@ public class UserController extends CommController {
 			if (user == null) {
 				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
 			}
-			int count = this.userService.modiUser(userId, pwd);
+			int count = this.userService.modiUser(userId, pwd, name, age);
 			if (count > 0) {
 				map = this.getSuccRtnMap("用户修改成功");
+			} else if (count == Const.USER_WITH_USERID_NOT_EXISTS) {
+				map = this.getFailRtnMap("指定用户不存在");
 			} else {
 				map = this.getFailRtnMap("用户修改失败");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe("返回错误信息:" + e.getMessage());
 			map = this.getFailRtnMap("系统异常");
 		}
 		log.info("修改用户结束");
@@ -246,6 +256,8 @@ public class UserController extends CommController {
 			List<User> userList = this.userService.queryUser(userId);
 			map = this.getSuccRtnMap(userList, "用户查询成功");
 		} catch (Exception e) {
+			log.severe("返回错误信息:" + e.getMessage());
+			e.printStackTrace();
 			map = this.getFailRtnMap("系统异常");
 		}
 		log.info("查询用户结束");

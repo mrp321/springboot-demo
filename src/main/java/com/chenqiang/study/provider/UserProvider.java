@@ -22,14 +22,7 @@ public class UserProvider {
 	public String queryUser(String userId) {
 		return new SQL() {
 			{
-				String selectSql = null;
-				// 如果是查询所有用户信息,则过滤密码信息
-				if (StrUtil.isNotBlank(userId)) {
-					selectSql = "name, pwd, sex, age, pwdRec, pwdErrCout, lastLoginDate, isLock, version";
-				} else {
-					selectSql = "name, sex, age, pwdErrCout, lastLoginDate, isLock, version";
-				}
-				SELECT(selectSql);
+				SELECT("userId, name, pwd, sex, age, pwdRec, pwdErrCout, pwdExpiredDate, lastLoginDate, isLock, version");
 				FROM("user");
 				if (StrUtil.isNotBlank(userId)) {
 					WHERE("userId = #{userId}");

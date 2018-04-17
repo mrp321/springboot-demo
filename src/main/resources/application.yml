@@ -22,9 +22,9 @@ logging:
  ################# mapper文件配置#####################
 mybatis:
   # mapper.xml文件所在位置
-  mapper-locations: classpath:/com/chenqiang/study/mapper/*.xml#classpath:mapper/*.xml
+  # mapper-locations: classpath:com/chenqiang/study/mapper/*.xml#classpath:/mapper/*.xml
   # entity扫描的包名
-  type-aliases-package: com.chenqiang.study.entity
+  # type-aliases-package: com.chenqiang.study.entity
   # mybatis配置文件路径
   config-location: classpath:config/mybatis-config.xml
   
@@ -36,3 +36,5 @@ cust:
     errCout: 5
     # 最大密码有效期(单位:天)
     expiryDate: 30
+    # 最大密码记录数
+    recCout: 3

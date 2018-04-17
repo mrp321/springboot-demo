@@ -40,6 +40,11 @@ public class User {
 	 * 密码错误次数
 	 */
 	private Integer pwdErrCout;
+
+	/**
+	 * 密码有效期限
+	 */
+	private Date pwdExpiredDate;
 	/**
 	 * 最后一次登录日期
 	 */
@@ -52,6 +57,10 @@ public class User {
 	 * 用户创建日期
 	 */
 	private Date createTime;
+	/**
+	 * 用户更新日期
+	 */
+	private Date updateTime;
 
 	public User() {
 
@@ -141,6 +150,14 @@ public class User {
 		this.pwdErrCout = pwdErrCout;
 	}
 
+	public Date getPwdExpiredDate() {
+		return pwdExpiredDate;
+	}
+
+	public void setPwdExpiredDate(Date pwdExpiredDate) {
+		this.pwdExpiredDate = pwdExpiredDate;
+	}
+
 	public Date getLastLoginDate() {
 		return lastLoginDate;
 	}
@@ -165,11 +182,20 @@ public class User {
 		this.createTime = createTime;
 	}
 
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", pwd=" + pwd + ", sex=" + sex + ", age=" + age
-				+ ", pwdRec=" + pwdRec + ", pwdErrCout=" + pwdErrCout + ", lastLoginDate=" + lastLoginDate + ", isLock="
-				+ isLock + ", createTime=" + createTime + "]";
+				+ ", pwdRec=" + pwdRec + ", pwdErrCout=" + pwdErrCout + ", pwdExpiredDate=" + pwdExpiredDate
+				+ ", lastLoginDate=" + lastLoginDate + ", isLock=" + isLock + ", createTime=" + createTime
+				+ ", updateTime=" + updateTime + "]";
 	}
 
 }

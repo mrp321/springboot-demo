@@ -2,36 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chenqiang.study.dao.UserDao">
 	<!-- 根据用户ID修改用户信息 -add on 2018-4-17 by qchen-->
-	<update id="modiUserInfoByUserId" parameterType="User">
+	<update id="modiUserInfoByUserId" parameterType="com.chenqiang.study.entity.User">
 		UPDATE
 			user
 		SET
-			<if test="name != NULL AND name != ''">
+		     <!-- 注意:if test中的null和and不能写成大写的 ,否则会报错-->
+			<if test="name != null and name != ''">
 				name = #{name},
 			</if>
-			<if test="sex != NULL AND sex != ''">
+			<if test="sex != null">
 				sex = #{sex},
 			</if>
-			<if test="age != NULL AND age != ''">
+			<if test="age != null">
 				age = #{age},
 			</if>
-			<if test="pwd != NULL AND pwd != ''">
+			<if test="pwd != null and pwd != ''">
 				pwd = #{pwd},
 			</if>
-			<if test="pwdRec != NULL AND pwdRec != ''">
+			<if test="pwdRec != null and pwdRec != ''">
 				pwdRec = #{pwdRec},
 			</if>
-			<if test="pwdErrCout != NULL AND pwdErrCout != ''">
+			<if test="pwdErrCout != null">
 				pwdErrCout = #{pwdErrCout},
-			</if>						
-			<if test="lastLoginDate != NULL AND lastLoginDate != ''">
+			</if>	
+			<if test="pwdExpiredDate != null">
+                pwdExpiredDate = #{pwdExpiredDate},
+            </if>				
+			<if test="lastLoginDate != null">
 				lastLoginDate = #{lastLoginDate},
 			</if>
-			<if test="isLock != NULL AND isLock != ''">
+			<if test="isLock != null">
 				isLock = #{isLock},
 			</if>				
-			updateUser = #{updateUser},				
-			updateTime = #{updateTime},			
+			updateUser = #{userId},				
+			updateTime = NOW(),			
 			version = version + 1
 		WHERE
 			userId = #{userId}									

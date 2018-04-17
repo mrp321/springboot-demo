@@ -37,9 +37,13 @@ public interface UserService {
 	 *            用户id
 	 * @param pwd
 	 *            密码
+	 * @param age
+	 *            年龄
+	 * @param name
+	 *            姓名
 	 * @return
 	 */
-	int addUser(String userId, String pwd);
+	int addUser(String userId, String pwd, String name, Integer age);
 
 	/**
 	 * 删除用户
@@ -63,9 +67,13 @@ public interface UserService {
 	 *            用户名
 	 * @param pwd
 	 *            密码
+	 * @param age
+	 *            年龄
+	 * @param name
+	 *            姓名
 	 * @return
 	 */
-	int modiUser(String userId, String pwd);
+	int modiUser(String userId, String pwd, String name, Integer age);
 
 	/**
 	 * 查询用户

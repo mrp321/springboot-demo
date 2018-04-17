@@ -12,16 +12,24 @@ span {
 <body>
 	<div id="page">
 		<div id="login">
-			<p>xxxxx用户登录页xxxxx</p>
+			<p>xxxxx当前用户登录页xxxxx</p>
 			<input type="text" id="userId" placeholder="请输入用户id"> <input
 				type="password" id="pwd" placeholder="请输入密码"> <input
 				type="button" value="登录" @click="login()"><br /> 登录提示:<span>{{
 				loginMsg }}</span>
 		</div>
 		<div id="logout">
-			<p>xxxxx用户注销页xxxxx</p>
+			<p>xxxxx当前用户注销页xxxxx</p>
 			<input type="button" value="注销" @click="logout()"><br />
 			注销提示信息:<span>{{logoutMsg}}</span>
+		</div>
+
+		<div id="modiPwd" v-if="showPwdModiFlag">
+			<p>xxxxx当前用户密码修改页xxxxx</p>
+			<input type="password" value="" id="pwd1st" placeholder="请输入密码"><br />
+			<input type="password" value="" id="pwd2nd" placeholder="请再次输入密码"><br />
+			<input type="button" value="修改密码" @click="modiPwd()">
+			密码修改提示信息:<span>{{modiPwdMsg}}</span>
 		</div>
 		<br>
 
@@ -29,24 +37,32 @@ span {
 			<p>xxxxx用户操作页xxxxx</p>
 			<table>
 				<tr>
+					<th>用户id</th>
 					<th>用户名</th>
-					<th>密码</th>
+					<th>年龄</th>
 					<th>操作</th>
 				</tr>
 				<tr v-for="(user, index) in userList">
 					<td><input type="text" :value="user.userId"
 						:id="'oriuserId' + index" readonly diabled></td>
-					<td><input type="text" :value="user.pwd"
-						:id="'oriPwd' + index"></td>
+					<td><input type="text" :value="user.name"
+						:id="'oriName' + index"></td>
+					<td><input type="text" :value="user.age"
+						:id="'oriAge' + index"></td>
 					<td><input type="button" value="修改" @click="modiUser(index)"><input
 						type="button" value="删除" @click="delUser(index)"></td>
 				</tr>
-				<tr>
-					<td><input type="text" value="" id="newuserId"></td>
-					<td><input type="text" value="" id="newPwd"></td>
-					<td><input type="button" value="添加" @click="addUser()"></td>
-				</tr>
 			</table>
+			<hr />
+			<div>
+				<input type="text" value="" id="newuserId" placeholder="请输入用户id">
+				<br /> <input type="password" value="" id="newPwd"
+					placeholder="请输入密码"> <br /> <input type="text" value=""
+					id="newName" placeholder="请输入用户姓名(可为空)"> <br /> <input
+					type="text" value="" id="newAge" placeholder="请输入用户年龄(可为空)"><br />
+				<input type="button" value="添加" @click="addUser()">
+
+			</div>
 			用户操作提示信息: <span>{{opeMsg}}</span>
 		</div>
 	</div>
@@ -62,8 +78,12 @@ span {
 				opeMsg : "暂无信息显示",
 				// 注销信息
 				logoutMsg : "暂无信息显示",
+				// 修改密码信息
+				modiPwdMsg : "暂无信息显示",
 				// 用户列表
 				userList : [],
+				// 显示修改密码div
+				showPwdModiFlag : false,
 			},
 			mounted : function() {
 				this.$nextTick()
@@ -83,6 +103,12 @@ span {
 							pwd : pwd
 						},
 						success : function(data) {
+							// 首次登陆,需要修改密码;密码过期,需要修改密码
+							if (data.data == -7 || data.data == -8) {
+								page.showPwdModiFlag = true;
+							} else {
+								page.showPwdModiFlag = false;
+							}
 							page.loginMsg = data.msg;
 							if (data.success) {
 								page.queryUser();
@@ -99,11 +125,38 @@ span {
 							page.logoutMsg = data.msg;
 							page.opeMsg = "暂无信息显示";
 							page.loginMsg = "暂无信息显示";
+							page.modiPwdMsg = "暂无信息显示";
 							page.userList = [];
 							$("#userId").val("");
 							$("#pwd").val("");
 						}
 					})
+				},
+				// 修改密码
+				modiPwd : function() {
+					var userId = $("#userId").val();
+					var pwd1st = $("#pwd1st").val();
+					var pwd2nd = $("#pwd2nd").val();
+					if (pwd1st != null && pwd1st != "" && pwd2nd != null
+							&& pwd2nd != "" && pwd1st == pwd2nd) {
+						$.ajax({
+							type : "post",
+							url : "/user/modiUser",
+							data : {
+								userId : userId,
+								pwd : pwd1st,
+							},
+							success : function(data) {
+								page.modiPwdMsg = data.msg;
+								if (data.msg == "您尚未登录,或者登录会话已过期") {
+									page.userList = [];
+								}
+							}
+						})
+					} else {
+						page.modiPwdMsg = "请确保两次均输入密码,且密码内容一致"
+					}
+
 				},
 				// 查询
 				queryUser : function() {
@@ -126,13 +179,15 @@ span {
 				// 修改
 				modiUser : function(index) {
 					var userId = $("#oriuserId" + index).val();
-					var pwd = $("#oriPwd" + index).val();
+					var name = $("#oriName" + index).val();
+					var age = $("#oriAge" + index).val();
 					$.ajax({
 						type : "post",
 						url : "/user/modiUser",
 						data : {
 							userId : userId,
-							pwd : pwd,
+							name : name,
+							age : age,
 						},
 						success : function(data) {
 							page.opeMsg = data.msg;
@@ -144,7 +199,9 @@ span {
 							}
 						}
 					})
+
 				},
+
 				// 删除
 				delUser : function(index) {
 					var userId = $("#oriuserId" + index).val();
@@ -169,12 +226,16 @@ span {
 				addUser : function() {
 					var userId = $("#newuserId").val();
 					var pwd = $("#newPwd").val();
+					var name = $("#newName").val();
+					var age = $("#newAge").val();
 					$.ajax({
 						type : "post",
 						url : "/user/addUser",
 						data : {
 							userId : userId,
-							pwd : pwd
+							pwd : pwd,
+							name : name,
+							age : age
 						},
 						success : function(data) {
 							page.opeMsg = data.msg;

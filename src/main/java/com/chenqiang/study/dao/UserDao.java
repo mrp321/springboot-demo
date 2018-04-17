@@ -4,12 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.stereotype.Repository;
 
 import com.chenqiang.study.entity.User;
 import com.chenqiang.study.provider.UserProvider;
@@ -48,8 +46,8 @@ public interface UserDao {
 	 *            密码
 	 * @return
 	 */
-	@Insert("INSERT INTO user(userId, pwd, createTime, createUser, updateTime, updateUser, version) VALUES(#{userId}, #{pwd}, NOW(), #{name}, NOW(), #{userId}, 0)")
-	public int addUser(@Param("userId") String userId, @Param("pwd") String pwd);
+	@Insert("INSERT INTO user(userId, name, sex, age, pwd, pwdRec, pwdErrCout, pwdExpiredDate, isLock, createTime, createUser, updateTime, updateUser, version) VALUES(#{userId},  #{name}, #{sex}, #{age}, #{pwd}, #{pwd}, 0, #{pwdExpiredDate}, 0, NOW(), #{userId}, NOW(), #{userId}, 0)")
+	public int addUser(User user);
 
 	/**
 	 * 删除用户
@@ -100,7 +98,7 @@ public interface UserDao {
 	 *            用户id
 	 * @return
 	 */
-	@Select("SELECT userId, pwd, pwdRec, pwdErrCout, LastLoginDate, isLock, createTime FROM user WHERE userId = #{userId}")
+	@Select("SELECT userId, pwd, pwdRec, pwdErrCout, pwdExpiredDate, LastLoginDate, isLock, createTime, updateTime FROM user WHERE userId = #{userId}")
 	User queryUserByUserId(String userId);
 
 	/**
@@ -112,6 +110,6 @@ public interface UserDao {
 	 *            包含所需参数的用户实体
 	 * @return
 	 */
-	public int modiUserInfoByUserId(@Param("user")User user);
+	public int modiUserInfoByUserId(User user);
 
 }
