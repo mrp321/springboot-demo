@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chenqiang.study.dao.UserDao">
+	<!-- 根据用户ID修改用户信息 -add on 2018-4-17 by qchen-->
+	<update id="modiUserInfoByUserId" parameterType="User">
+		UPDATE
+			user
+		SET
+			<if test="name != NULL AND name != ''">
+				name = #{name},
+			</if>
+			<if test="sex != NULL AND sex != ''">
+				sex = #{sex},
+			</if>
+			<if test="age != NULL AND age != ''">
+				age = #{age},
+			</if>
+			<if test="pwd != NULL AND pwd != ''">
+				pwd = #{pwd},
+			</if>
+			<if test="pwdRec != NULL AND pwdRec != ''">
+				pwdRec = #{pwdRec},
+			</if>
+			<if test="pwdErrCout != NULL AND pwdErrCout != ''">
+				pwdErrCout = #{pwdErrCout},
+			</if>						
+			<if test="lastLoginDate != NULL AND lastLoginDate != ''">
+				lastLoginDate = #{lastLoginDate},
+			</if>
+			<if test="isLock != NULL AND isLock != ''">
+				isLock = #{isLock},
+			</if>				
+			updateUser = #{updateUser},				
+			updateTime = #{updateTime},			
+			version = version + 1
+		WHERE
+			userId = #{userId}									
+	</update>
+
+</mapper>

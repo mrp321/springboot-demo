@@ -1,0 +1,255 @@
+package com.chenqiang.study.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.chenqiang.study.entity.User;
+import com.chenqiang.study.service.UserService;
+import com.chenqiang.study.util.Const;
+
+import cn.hutool.core.util.StrUtil;
+
+/**
+ * 用户控制层
+ * 
+ * @author qchen
+ * @date 2018-4-13
+ *
+ */
+@RestController
+@RequestMapping("user")
+public class UserController extends CommController {
+	/** 用户业务层 */
+	@Autowired
+	private UserService userService;
+	/** 日志 */
+	private static Logger log = Logger.getLogger(UserController.class.getName());
+
+	/**
+	 * 用户登录
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * @param userId
+	 *            用户id
+	 * @param pwd
+	 *            密码
+	 * @return
+	 */
+	@PostMapping("login")
+	public Map<String, Object> login(HttpSession session, String userId, String pwd) {
+		log.info("登录开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (StrUtil.isBlank(userId) || StrUtil.isBlank(pwd)) {
+			return this.getFailRtnMap("传入参数不能为空");
+		}
+		try {
+			Map<String, Object> userInfoMap = this.userService.getLoginMap(userId, pwd);
+			// 获取操作结果flag
+			int flag = (int) userInfoMap.get("flag");
+			if (flag == Const.USER_FIRST_LOGIN_PLEASE_MODIFY_PWD) {
+				map = this.getFailRtnMap("首次登录,请修改密码");
+			} else if (flag == Const.USER_IS_LOCKEDIN) {
+				map = this.getFailRtnMap("当前用户已锁定");
+			} else if (flag > 0 || flag == Const.USER_LOGIN_SUCCESS) {
+				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
+				map = this.getSuccRtnMap("登录成功");
+			} else if (flag == Const.USER_PWD_EXPIRED) {
+				map = this.getFailRtnMap("用户密码已过期");
+			} else {
+				map = this.getFailRtnMap("该用户不存在");
+			}
+		} catch (Exception e) {
+			log.severe("返回错误信息:" + e.getMessage());
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("登录结束");
+		return map;
+	}
+
+	/**
+	 * 注销
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * 
+	 * @return
+	 */
+	@PostMapping("logout")
+	public Map<String, Object> logout(HttpSession session) {
+		log.info("注销开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			Object user = session.getAttribute(Const.LOGIN_USER);
+			if (user != null) {
+				session.removeAttribute(Const.LOGIN_USER);
+			}
+			map = this.getSuccRtnMap("用户注销成功");
+		} catch (Exception e) {
+			log.severe("返回错误信息:" + e.getMessage());
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("注销结束");
+		return map;
+	}
+
+	/**
+	 * 添加用户
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * @param userId
+	 *            用户id
+	 * @param pwd
+	 *            密码
+	 * @return
+	 */
+	@PostMapping("addUser")
+	public Map<String, Object> addUser(HttpSession session, String userId, String pwd) {
+		log.info("添加用户开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (StrUtil.isBlank(userId) || StrUtil.isBlank(pwd)) {
+			return this.getFailRtnMap("传入参数不能为空");
+		}
+		try {
+			Object user = session.getAttribute(Const.LOGIN_USER);
+			if (user == null) {
+				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+			}
+			int count = this.userService.addUser(userId, pwd);
+			if (count > 0) {
+				map = this.getSuccRtnMap("用户添加成功");
+			} else if (count == Const.USER_WITH_USERID_ALREADY_EXISTS) {
+				map = this.getFailRtnMap("指定用户已存在");
+			} else {
+				map = this.getFailRtnMap("用户添加失败");
+			}
+		} catch (Exception e) {
+			log.severe("返回错误信息:" + e.getMessage());
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("添加用户结束");
+		return map;
+	}
+
+	/**
+	 * 删除用户
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * @param userId
+	 *            用户id
+	 * @return
+	 */
+	@PostMapping("delUser")
+	public Map<String, Object> delUser(HttpSession session, String userId) {
+		log.info("删除用户开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (StrUtil.isBlank(userId)) {
+			return this.getFailRtnMap("传入参数不能为空");
+		}
+		try {
+			Object user = session.getAttribute(Const.LOGIN_USER);
+			if (user == null) {
+				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+			}
+			int count = this.userService.delUser(userId);
+			if (count > 0) {
+				map = this.getSuccRtnMap("用户删除成功");
+			} else {
+				map = this.getFailRtnMap("用户删除失败");
+			}
+		} catch (Exception e) {
+			log.severe("返回错误信息:" + e.getMessage());
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("删除用户结束");
+		return map;
+	}
+
+	/**
+	 * 修改用户
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * @param userId
+	 *            用户id
+	 * @param pwd
+	 *            密码
+	 * @return
+	 */
+	@PostMapping("modiUser")
+	public Map<String, Object> modiUser(HttpSession session, String userId, String pwd) {
+		log.info("修改用户开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (StrUtil.isBlank(userId)) {
+			return this.getFailRtnMap("传入参数不能为空");
+		}
+		try {
+			Object user = session.getAttribute(Const.LOGIN_USER);
+			if (user == null) {
+				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+			}
+			int count = this.userService.modiUser(userId, pwd);
+			if (count > 0) {
+				map = this.getSuccRtnMap("用户修改成功");
+			} else {
+				map = this.getFailRtnMap("用户修改失败");
+			}
+		} catch (Exception e) {
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("修改用户结束");
+		return map;
+	}
+
+	/**
+	 * 查询用户
+	 * 
+	 * @author qchen
+	 * @date 2018-4-13
+	 * @param session
+	 *            会话
+	 * @param userId
+	 *            用户id(可选)
+	 * @return
+	 */
+	@GetMapping("queryUser")
+	public Map<String, Object> queryUser(HttpSession session, String userId) {
+		log.info("查询用户开始");
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			Object user = session.getAttribute(Const.LOGIN_USER);
+			if (user == null) {
+				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+			}
+			List<User> userList = this.userService.queryUser(userId);
+			map = this.getSuccRtnMap(userList, "用户查询成功");
+		} catch (Exception e) {
+			map = this.getFailRtnMap("系统异常");
+		}
+		log.info("查询用户结束");
+		return map;
+	}
+
+}

@@ -1,0 +1,38 @@
+# 端口配置
+server:
+  port: 8090
+  
+  
+#################### 数据库配置####################
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    # 添加?autoReconnect=true&useSSL=false去除控制台警告:Establishing SSL connection without server's identity verification is not recommended
+    url: jdbc:mysql://localhost:3306/springboot?useUnicode=yes&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    username: root
+    password: root
+    
+################## 日志级别以及路径配置####################
+logging: 
+  level: 
+    com.chenqiang.study.controller: INFO
+    com.chenqiang.study.dao: DEBUG
+  file: logs/spring-boot-logging.log
+    
+ ################# mapper文件配置#####################
+mybatis:
+  # mapper.xml文件所在位置
+  mapper-locations: classpath:/com/chenqiang/study/mapper/*.xml#classpath:mapper/*.xml
+  # entity扫描的包名
+  type-aliases-package: com.chenqiang.study.entity
+  # mybatis配置文件路径
+  config-location: classpath:config/mybatis-config.xml
+  
+  
+################## 用户自定义配置#####################
+cust: 
+  pwd: 
+    # 最大密码错误次数
+    errCout: 5
+    # 最大密码有效期(单位:天)
+    expiryDate: 30

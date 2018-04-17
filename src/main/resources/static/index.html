@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>首页</title>
+<style>
+span {
+	color: red;
+}
+</style>
+</head>
+<body>
+	<div id="page">
+		<div id="login">
+			<p>xxxxx用户登录页xxxxx</p>
+			<input type="text" id="userId" placeholder="请输入用户id"> <input
+				type="password" id="pwd" placeholder="请输入密码"> <input
+				type="button" value="登录" @click="login()"><br /> 登录提示:<span>{{
+				loginMsg }}</span>
+		</div>
+		<div id="logout">
+			<p>xxxxx用户注销页xxxxx</p>
+			<input type="button" value="注销" @click="logout()"><br />
+			注销提示信息:<span>{{logoutMsg}}</span>
+		</div>
+		<br>
+
+		<div id="allUser">
+			<p>xxxxx用户操作页xxxxx</p>
+			<table>
+				<tr>
+					<th>用户名</th>
+					<th>密码</th>
+					<th>操作</th>
+				</tr>
+				<tr v-for="(user, index) in userList">
+					<td><input type="text" :value="user.userId"
+						:id="'oriuserId' + index" readonly diabled></td>
+					<td><input type="text" :value="user.pwd"
+						:id="'oriPwd' + index"></td>
+					<td><input type="button" value="修改" @click="modiUser(index)"><input
+						type="button" value="删除" @click="delUser(index)"></td>
+				</tr>
+				<tr>
+					<td><input type="text" value="" id="newuserId"></td>
+					<td><input type="text" value="" id="newPwd"></td>
+					<td><input type="button" value="添加" @click="addUser()"></td>
+				</tr>
+			</table>
+			用户操作提示信息: <span>{{opeMsg}}</span>
+		</div>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+	<script>
+		var page = new Vue({
+			el : "#page",
+			data : {
+				// 登录信息
+				loginMsg : "暂无信息显示",
+				// 操作信息
+				opeMsg : "暂无信息显示",
+				// 注销信息
+				logoutMsg : "暂无信息显示",
+				// 用户列表
+				userList : [],
+			},
+			mounted : function() {
+				this.$nextTick()
+				{
+				}
+			},
+			methods : {
+				// 登录
+				login : function() {
+					var userId = $("#userId").val();
+					var pwd = $("#pwd").val();
+					$.ajax({
+						type : "post",
+						url : "/user/login",
+						data : {
+							userId : userId,
+							pwd : pwd
+						},
+						success : function(data) {
+							page.loginMsg = data.msg;
+							if (data.success) {
+								page.queryUser();
+							}
+						}
+					})
+				},
+				// 注销
+				logout : function() {
+					$.ajax({
+						type : "post",
+						url : "/user/logout",
+						success : function(data) {
+							page.logoutMsg = data.msg;
+							page.opeMsg = "暂无信息显示";
+							page.loginMsg = "暂无信息显示";
+							page.userList = [];
+							$("#userId").val("");
+							$("#pwd").val("");
+						}
+					})
+				},
+				// 查询
+				queryUser : function() {
+					$.ajax({
+						type : "get",
+						url : "/user/queryUser",
+						data : {
+
+						},
+						success : function(data) {
+							// page.opeMsg = data.msg;
+							if (data.success) {
+								page.userList = data.data;
+							} else {
+								page.userList = [];
+							}
+						}
+					})
+				},
+				// 修改
+				modiUser : function(index) {
+					var userId = $("#oriuserId" + index).val();
+					var pwd = $("#oriPwd" + index).val();
+					$.ajax({
+						type : "post",
+						url : "/user/modiUser",
+						data : {
+							userId : userId,
+							pwd : pwd,
+						},
+						success : function(data) {
+							page.opeMsg = data.msg;
+							if (data.msg == "您尚未登录,或者登录会话已过期") {
+								page.userList = [];
+							}
+							if (data.success) {
+								page.queryUser();
+							}
+						}
+					})
+				},
+				// 删除
+				delUser : function(index) {
+					var userId = $("#oriuserId" + index).val();
+					$.ajax({
+						type : "post",
+						url : "/user/delUser",
+						data : {
+							userId : userId,
+						},
+						success : function(data) {
+							page.opeMsg = data.msg;
+							if (data.msg == "您尚未登录,或者登录会话已过期") {
+								page.userList = [];
+							}
+							if (data.success) {
+								page.queryUser();
+							}
+						}
+					})
+				},
+				// 添加
+				addUser : function() {
+					var userId = $("#newuserId").val();
+					var pwd = $("#newPwd").val();
+					$.ajax({
+						type : "post",
+						url : "/user/addUser",
+						data : {
+							userId : userId,
+							pwd : pwd
+						},
+						success : function(data) {
+							page.opeMsg = data.msg;
+							if (data.msg == "您尚未登录,或者登录会话已过期") {
+								page.userList = [];
+							}
+							if (data.success) {
+								page.queryUser();
+							}
+						}
+					})
+				}
+			}
+
+		})
+	</script>
+</body>
+</html>
