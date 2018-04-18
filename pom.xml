@@ -64,8 +64,22 @@
 		</plugins>
 		<!-- 把源代码中的xml文件,properties文件,yml文件，打包到相应位置 -->
 		<!-- 如果不添加此节点mybatis的mapper.xml文件都会被漏掉。 -->
- 		<!-- <resources>
-			<resource>
+ 		<resources>
+ 			<resource>
+ 				<directory>src/main/java</directory>
+ 				<includes>
+ 					<include>**/*</include>
+ 				</includes>
+ 				<filtering>false</filtering>
+ 			</resource>
+ 			<resource>
+ 				<directory>src/main/resources</directory>
+ 				<includes>
+ 					<include>**/*</include>
+ 				</includes>
+ 				<filtering>false</filtering>
+ 			</resource>
+			<!-- <resource>
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.properties</include>
@@ -81,8 +95,8 @@
 					<include>**/*.yml</include>
 				</includes>
 				<filtering>false</filtering>
-			</resource>
-		</resources> -->
+			</resource> -->
+		</resources>
 	</build>
 
 
