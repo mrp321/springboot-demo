@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService {
 			}
 			param.setPwdRec(pwdRecAfter);
 			// 添加密码修改记录
-			this.userDao.addPwdRec(userId, pwdRec);
+			this.userDao.addPwdRec(userId, user.getPwd());
 		}
 		Date pwdExpiredDate = DateUtil.offsetDay(new Date(), custPWdExpiryDate);
 		param.setPwdExpiredDate(pwdExpiredDate);
