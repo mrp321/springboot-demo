@@ -7,10 +7,13 @@
 span {
 	color: red;
 }
+[v-cloak] {
+	display: none !important
+}
 </style>
 </head>
 <body>
-	<div id="page">
+	<div id="page" v-cloak>
 		<div id="login">
 			<p>xxxxx当前用户登录页xxxxx</p>
 			<input type="text" id="userId" placeholder="请输入用户id"> <input
@@ -67,6 +70,8 @@ span {
 		</div>
 	</div>
 	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jsencrypt/2.3.1/jsencrypt.min.js"></script>
+	<script type="text/javascript" src="js/encrypt.js"></script>
 	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
 	<script>
 		var page = new Vue({
@@ -100,7 +105,7 @@ span {
 						url : "/user/login",
 						data : {
 							userId : userId,
-							pwd : pwd
+							pwd : enc(pwd)
 						},
 						success : function(data) {
 							// 首次登陆,需要修改密码;密码过期,需要修改密码
@@ -144,7 +149,7 @@ span {
 							url : "/user/modiUser",
 							data : {
 								userId : userId,
-								pwd : pwd1st,
+								pwd : enc(pwd1st),
 							},
 							success : function(data) {
 								page.modiPwdMsg = data.msg;
@@ -233,7 +238,7 @@ span {
 						url : "/user/addUser",
 						data : {
 							userId : userId,
-							pwd : pwd,
+							pwd : enc(pwd),
 							name : name,
 							age : age
 						},

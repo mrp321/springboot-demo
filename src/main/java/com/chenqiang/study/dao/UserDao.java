@@ -112,4 +112,18 @@ public interface UserDao {
 	 */
 	public int modiUserInfoByUserId(User user);
 
+	/**
+	 * 添加密码修改记录
+	 * 
+	 * @author qchen
+	 * @date 2018-4-24
+	 * @param userId
+	 *            用户id
+	 * @param pwdRec
+	 *            修改前密码
+	 * @return
+	 */
+	@Insert("INSERT INTO pwd_rec(userId, pwd, createTime, createUser, updateTime, updateUser, version) VALUES(#{userId}, #{pwdRec}, NOW(), #{userId}, NOW(), #{userId}, 0)")
+	public int addPwdRec(String userId, String pwdRec);
+
 }

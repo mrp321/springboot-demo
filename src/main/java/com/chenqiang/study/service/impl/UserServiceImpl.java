@@ -15,9 +15,11 @@ import com.chenqiang.study.dao.UserDao;
 import com.chenqiang.study.entity.User;
 import com.chenqiang.study.service.UserService;
 import com.chenqiang.study.util.Const;
+import com.chenqiang.study.util.SecurityUtil;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.DigestUtil;
 
 /**
@@ -38,6 +40,10 @@ public class UserServiceImpl implements UserService {
 	private int custPWdExpiryDate;
 	@Value("${cust.pwd.recCout}")
 	private int custPwdRecCout;
+	@Value("${cust.rsa.privateKey}")
+	private String privateKey;
+	@Value("${cust.rsa.publicKey}")
+	private String publicKey;
 
 	/**
 	 * 用户登录
@@ -76,7 +82,10 @@ public class UserServiceImpl implements UserService {
 		// 根据userId查询用户信息
 		User user = this.userDao.queryUserByUserId(userId);
 		if (user == null) {
-			String pwdMD5 = DigestUtil.md5Hex(pwd);
+			// 密码rsa解密后使用base64加密
+			RSA rsa = new RSA(privateKey, publicKey);
+			String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+			String pwdMD5 = DigestUtil.md5Hex(pwdDec);
 			User param = new User();
 			param.setUserId(userId);
 			param.setName(name);
@@ -137,7 +146,10 @@ public class UserServiceImpl implements UserService {
 		param.setName(name);
 		param.setAge(age);
 		if (StrUtil.isNotBlank(pwd)) {
-			String pwdMD5 = DigestUtil.md5Hex(pwd);
+			// 密码rsa解密后md5加密
+			RSA rsa = new RSA(privateKey, publicKey);
+			String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+			String pwdMD5 = DigestUtil.md5Hex(pwdDec);
 			param.setPwd(pwdMD5);
 			// 定义修改之后的密码记录
 			String pwdRecAfter = null;
@@ -155,6 +167,8 @@ public class UserServiceImpl implements UserService {
 				pwdRecAfter = StrUtil.join(",", pwdRecList);
 			}
 			param.setPwdRec(pwdRecAfter);
+			// 添加密码修改记录
+			this.userDao.addPwdRec(userId, pwdRec);
 		}
 		Date pwdExpiredDate = DateUtil.offsetDay(new Date(), custPWdExpiryDate);
 		param.setPwdExpiredDate(pwdExpiredDate);
@@ -202,10 +216,13 @@ public class UserServiceImpl implements UserService {
 			int isLock = user.getIsLock();
 			// 如果账号未锁定
 			if (isLock == Const.USER_ACCOUNT_STATUS_NOT_LOCKED) {
+				// 处理前台传来的密码(rsa解密)
+				RSA rsa = new RSA(privateKey, publicKey);
+				String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+				// 如果数据库中的密码和用户输入的密码相同,说明该用户的用户id和密码正确无误
 				// 获取数据库中存储的密码
 				String pwdOfUser = user.getPwd();
-				// 如果数据库中的密码和用户输入的密码相同,说明该用户的用户id和密码正确无误
-				if (DigestUtil.md5Hex(pwd).equals(pwdOfUser)) {
+				if (DigestUtil.md5Hex(pwdDec).equals(pwdOfUser)) {
 					// 获取该账号的密码有效期限
 					Date pwdExpiredDate = user.getPwdExpiredDate();
 					// 获取用户密码是否过期标识
