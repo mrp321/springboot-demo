@@ -124,6 +124,6 @@ public interface UserDao {
 	 * @return
 	 */
 	@Insert("INSERT INTO pwd_rec(userId, pwd, createTime, createUser, updateTime, updateUser, version) VALUES(#{userId}, #{pwdRec}, NOW(), #{userId}, NOW(), #{userId}, 0)")
-	public int addPwdRec(String userId, String pwdRec);
+	public int addPwdRec(@Param("userId") String userId, @Param("pwdRec") String pwdRec);
 
 }

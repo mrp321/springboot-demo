@@ -19,7 +19,6 @@ import com.chenqiang.study.util.SecurityUtil;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.DigestUtil;
 
 /**
@@ -34,16 +33,26 @@ public class UserServiceImpl implements UserService {
 	/** 用户DAO层 */
 	@Autowired
 	private UserDao userDao;
+	/**
+	 * 自定义密码错误次数
+	 */
 	@Value("${cust.pwd.errCout}")
 	private int custPwdErrCout;
+	/**
+	 * 自定义密码有效期长度
+	 */
 	@Value("${cust.pwd.expiryDate}")
 	private int custPWdExpiryDate;
+	/**
+	 * 自定义密码最大记录数
+	 */
 	@Value("${cust.pwd.recCout}")
 	private int custPwdRecCout;
+	/**
+	 * 私钥
+	 */
 	@Value("${cust.rsa.privateKey}")
 	private String privateKey;
-	@Value("${cust.rsa.publicKey}")
-	private String publicKey;
 
 	/**
 	 * 用户登录
@@ -76,15 +85,15 @@ public class UserServiceImpl implements UserService {
 	 * @param age
 	 *            年龄
 	 * @return
+	 * @throws Exception
 	 */
 	@Override
-	public int addUser(String userId, String pwd, String name, Integer age) {
+	public int addUser(String userId, String pwd, String name, Integer age) throws Exception {
 		// 根据userId查询用户信息
 		User user = this.userDao.queryUserByUserId(userId);
 		if (user == null) {
 			// 密码rsa解密后使用base64加密
-			RSA rsa = new RSA(privateKey, publicKey);
-			String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+			String pwdDec = SecurityUtil.decByRSA(pwd, privateKey);
 			String pwdMD5 = DigestUtil.md5Hex(pwdDec);
 			User param = new User();
 			param.setUserId(userId);
@@ -131,9 +140,10 @@ public class UserServiceImpl implements UserService {
 	 * @param name
 	 *            姓名
 	 * @return
+	 * @throws Exception
 	 */
 	@Override
-	public int modiUser(String userId, String pwd, String name, Integer age) {
+	public int modiUser(String userId, String pwd, String name, Integer age) throws Exception {
 
 		// 根据userId查询用户信息
 		User user = this.userDao.queryUserByUserId(userId);
@@ -147,8 +157,7 @@ public class UserServiceImpl implements UserService {
 		param.setAge(age);
 		if (StrUtil.isNotBlank(pwd)) {
 			// 密码rsa解密后md5加密
-			RSA rsa = new RSA(privateKey, publicKey);
-			String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+			String pwdDec = SecurityUtil.decByRSA(pwd, privateKey);
 			String pwdMD5 = DigestUtil.md5Hex(pwdDec);
 			param.setPwd(pwdMD5);
 			// 定义修改之后的密码记录
@@ -200,9 +209,10 @@ public class UserServiceImpl implements UserService {
 	 * @param pwd
 	 *            密码
 	 * @return
+	 * @throws Exception
 	 */
 	@Override
-	public Map<String, Object> getLoginMap(String userId, String pwd) {
+	public Map<String, Object> getLoginMap(String userId, String pwd) throws Exception {
 		// 定义一个map,存放返回的信息
 		Map<String, Object> map = new HashMap<String, Object>();
 		// 定义一个user实体,用于存放参数,进行数据库操作
@@ -217,8 +227,7 @@ public class UserServiceImpl implements UserService {
 			// 如果账号未锁定
 			if (isLock == Const.USER_ACCOUNT_STATUS_NOT_LOCKED) {
 				// 处理前台传来的密码(rsa解密)
-				RSA rsa = new RSA(privateKey, publicKey);
-				String pwdDec = SecurityUtil.decryptStrByRSA(rsa, pwd);
+				String pwdDec = SecurityUtil.decByRSA(pwd, privateKey);
 				// 如果数据库中的密码和用户输入的密码相同,说明该用户的用户id和密码正确无误
 				// 获取数据库中存储的密码
 				String pwdOfUser = user.getPwd();
@@ -230,6 +239,7 @@ public class UserServiceImpl implements UserService {
 					// 如果过期,转密码修改页面
 					if (isPwdExpired) {
 						flag = Const.USER_PWD_EXPIRED;
+						map.put(Const.USER_FROM_DB, user);
 					} else {
 						// 密码未过期,判断用户是否是首次登录
 						// 获取创建日期,和更新日期,比较这两个日期是否相同
@@ -238,6 +248,7 @@ public class UserServiceImpl implements UserService {
 						Date updateTime = user.getUpdateTime();
 						if (createTime.compareTo(updateTime) == 0) {
 							flag = Const.USER_FIRST_LOGIN_PLEASE_MODIFY_PWD;
+							map.put(Const.USER_FROM_DB, user);
 						} else {
 							// 更新用户最近一次登陆日期
 							param.setLastLoginDate(new Date());

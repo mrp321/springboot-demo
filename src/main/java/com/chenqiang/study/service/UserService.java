@@ -42,8 +42,9 @@ public interface UserService {
 	 * @param name
 	 *            姓名
 	 * @return
+	 * @throws Exception
 	 */
-	int addUser(String userId, String pwd, String name, Integer age);
+	int addUser(String userId, String pwd, String name, Integer age) throws Exception;
 
 	/**
 	 * 删除用户
@@ -72,8 +73,9 @@ public interface UserService {
 	 * @param name
 	 *            姓名
 	 * @return
+	 * @throws Exception
 	 */
-	int modiUser(String userId, String pwd, String name, Integer age);
+	int modiUser(String userId, String pwd, String name, Integer age) throws Exception;
 
 	/**
 	 * 查询用户
@@ -96,7 +98,8 @@ public interface UserService {
 	 * @param pwd
 	 *            密码
 	 * @return
+	 * @throws Exception
 	 */
-	Map<String, Object> getLoginMap(String userId, String pwd);
+	Map<String, Object> getLoginMap(String userId, String pwd) throws Exception;
 
 }

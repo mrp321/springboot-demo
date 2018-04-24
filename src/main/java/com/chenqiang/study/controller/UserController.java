@@ -60,6 +60,7 @@ public class UserController extends CommController {
 			// 获取操作结果flag
 			int flag = (int) userInfoMap.get("flag");
 			if (flag == Const.USER_FIRST_LOGIN_PLEASE_MODIFY_PWD) {
+				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
 				map = this.getFailRtnMap(flag, "首次登录,请修改密码");
 			} else if (flag == Const.USER_IS_LOCKEDIN) {
 				map = this.getFailRtnMap(flag, "当前用户已锁定");
@@ -67,6 +68,7 @@ public class UserController extends CommController {
 				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
 				map = this.getSuccRtnMap(flag, "登录成功");
 			} else if (flag == Const.USER_PWD_EXPIRED) {
+				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
 				map = this.getFailRtnMap(flag, "用户密码已过期, 请修改密码");
 			} else if (flag == Const.USER_WRONG_PWD) {
 				map = this.getFailRtnMap(flag, "用户密码错误");

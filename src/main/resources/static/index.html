@@ -7,6 +7,7 @@
 span {
 	color: red;
 }
+
 [v-cloak] {
 	display: none !important
 }
@@ -31,7 +32,7 @@ span {
 			<p>xxxxx当前用户密码修改页xxxxx</p>
 			<input type="password" value="" id="pwd1st" placeholder="请输入密码"><br />
 			<input type="password" value="" id="pwd2nd" placeholder="请再次输入密码"><br />
-			<input type="button" value="修改密码" @click="modiPwd()">
+			<input type="button" value="修改密码" @click="modiPwd()"><br />
 			密码修改提示信息:<span>{{modiPwdMsg}}</span>
 		</div>
 		<br>
