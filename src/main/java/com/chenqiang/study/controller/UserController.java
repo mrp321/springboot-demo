@@ -53,7 +53,7 @@ public class UserController extends CommController {
 		log.info("登录开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId) || StrUtil.isBlank(pwd)) {
-			return this.getFailRtnMap("传入参数不能为空");
+			return this.getFailRtnMap(Const.MSG_NO_PARAMS);
 		}
 		try {
 			Map<String, Object> userInfoMap = this.userService.getLoginMap(userId, pwd);
@@ -61,24 +61,24 @@ public class UserController extends CommController {
 			int flag = (int) userInfoMap.get("flag");
 			if (flag == Const.USER_FIRST_LOGIN_PLEASE_MODIFY_PWD) {
 				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
-				map = this.getFailRtnMap(flag, "首次登录,请修改密码");
+				map = this.getFailRtnMap(flag, Const.MSG_FIRST_LOGIN_MINUS8);
 			} else if (flag == Const.USER_IS_LOCKEDIN) {
-				map = this.getFailRtnMap(flag, "当前用户已锁定");
+				map = this.getFailRtnMap(flag, Const.MSG_LOCKIN_MINUS6);
 			} else if (flag > 0) {
 				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
-				map = this.getSuccRtnMap(flag, "登录成功");
+				map = this.getSuccRtnMap(flag, Const.MSG_LOGIN_SUCCESS);
 			} else if (flag == Const.USER_PWD_EXPIRED) {
 				session.setAttribute(Const.LOGIN_USER, userInfoMap.get(Const.USER_FROM_DB));
-				map = this.getFailRtnMap(flag, "用户密码已过期, 请修改密码");
+				map = this.getFailRtnMap(flag, Const.MSG_PWD_EXPIRED_MINUS7);
 			} else if (flag == Const.USER_WRONG_PWD) {
-				map = this.getFailRtnMap(flag, "用户密码错误");
+				map = this.getFailRtnMap(flag, Const.MSG_PWD_WRONG_MINUS9);
 			} else {
-				map = this.getFailRtnMap(flag, "该用户不存在");
+				map = this.getFailRtnMap(flag, Const.MSG_LOGIN_FAIL);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("登录结束");
 		return map;
@@ -103,11 +103,11 @@ public class UserController extends CommController {
 			if (user != null) {
 				session.removeAttribute(Const.LOGIN_USER);
 			}
-			map = this.getSuccRtnMap("用户注销成功");
+			map = this.getSuccRtnMap(Const.MSG_LOGOUT_SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("注销结束");
 		return map;
@@ -131,25 +131,25 @@ public class UserController extends CommController {
 		log.info("添加用户开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId) || StrUtil.isBlank(pwd)) {
-			return this.getFailRtnMap("传入参数不能为空");
+			return this.getFailRtnMap(Const.MSG_NO_PARAMS);
 		}
 		try {
 			Object user = session.getAttribute(Const.LOGIN_USER);
 			if (user == null) {
-				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+				return this.getFailRtnMap(Const.MSG_NO_SESSION);
 			}
 			int count = this.userService.addUser(userId, pwd, name, age);
 			if (count > 0) {
-				map = this.getSuccRtnMap("用户添加成功");
+				map = this.getSuccRtnMap(Const.MSG_ADD_SUCCESS);
 			} else if (count == Const.USER_WITH_USERID_ALREADY_EXISTS) {
-				map = this.getFailRtnMap("指定用户已存在");
+				map = this.getFailRtnMap(Const.MSG_USER_EXISTS_MINUS5);
 			} else {
-				map = this.getFailRtnMap("用户添加失败");
+				map = this.getFailRtnMap(Const.MSG_ADD_FAIL);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("添加用户结束");
 		return map;
@@ -171,23 +171,23 @@ public class UserController extends CommController {
 		log.info("删除用户开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId)) {
-			return this.getFailRtnMap("传入参数不能为空");
+			return this.getFailRtnMap(Const.MSG_NO_PARAMS);
 		}
 		try {
 			Object user = session.getAttribute(Const.LOGIN_USER);
 			if (user == null) {
-				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+				return this.getFailRtnMap(Const.MSG_NO_SESSION);
 			}
 			int count = this.userService.delUser(userId);
 			if (count > 0) {
-				map = this.getSuccRtnMap("用户删除成功");
+				map = this.getSuccRtnMap(Const.MSG_DEL_SUCCESS);
 			} else {
-				map = this.getFailRtnMap("用户删除失败");
+				map = this.getFailRtnMap(Const.MSG_DEL_FAIL);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("删除用户结束");
 		return map;
@@ -211,25 +211,25 @@ public class UserController extends CommController {
 		log.info("修改用户开始");
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (StrUtil.isBlank(userId)) {
-			return this.getFailRtnMap("传入参数不能为空");
+			return this.getFailRtnMap(Const.MSG_NO_PARAMS);
 		}
 		try {
 			Object user = session.getAttribute(Const.LOGIN_USER);
 			if (user == null) {
-				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+				return this.getFailRtnMap(Const.MSG_NO_SESSION);
 			}
 			int count = this.userService.modiUser(userId, pwd, name, age);
 			if (count > 0) {
-				map = this.getSuccRtnMap("用户修改成功");
+				map = this.getSuccRtnMap(Const.MSG_MODI_SUCCESS);
 			} else if (count == Const.USER_WITH_USERID_NOT_EXISTS) {
-				map = this.getFailRtnMap("指定用户不存在");
+				map = this.getFailRtnMap(Const.MSG_USER_NOT_EXISTS_MINUS4);
 			} else {
-				map = this.getFailRtnMap("用户修改失败");
+				map = this.getFailRtnMap(Const.MSG_MODI_FAIL);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("返回错误信息:" + e.getMessage());
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("修改用户结束");
 		return map;
@@ -253,14 +253,14 @@ public class UserController extends CommController {
 		try {
 			Object user = session.getAttribute(Const.LOGIN_USER);
 			if (user == null) {
-				return this.getFailRtnMap("您尚未登录,或者登录会话已过期");
+				return this.getFailRtnMap(Const.MSG_NO_SESSION);
 			}
 			List<User> userList = this.userService.queryUser(userId);
-			map = this.getSuccRtnMap(userList, "用户查询成功");
+			map = this.getSuccRtnMap(userList, Const.MSG_QUERY_SUCCESS);
 		} catch (Exception e) {
 			log.severe("返回错误信息:" + e.getMessage());
 			e.printStackTrace();
-			map = this.getFailRtnMap("系统异常");
+			map = this.getFailRtnMap(Const.MSG_EXCEPTION);
 		}
 		log.info("查询用户结束");
 		return map;

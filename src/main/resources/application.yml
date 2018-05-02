@@ -15,6 +15,7 @@ spring:
 ################## 日志级别以及路径配置####################
 logging: 
   level: 
+    root: INFO
     com.chenqiang.study.controller: INFO
     com.chenqiang.study.dao: DEBUG
   file: logs/spring-boot-logging.log
