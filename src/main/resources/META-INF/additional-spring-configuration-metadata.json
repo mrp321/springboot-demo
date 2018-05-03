@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "cust.pwd.err-cout",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.pwd.err-cout'"
+  },
+  {
+    "name": "cust.pwd.expiry-date",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.pwd.expiry-date'"
+  },
+  {
+    "name": "cust.pwd.rec-cout",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.pwd.rec-cout'"
+  },
+  {
+    "name": "cust.rsa.public-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.rsa.public-key'"
+  },
+  {
+    "name": "cust.rsa.private-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.rsa.private-key'"
+  },
+  {
+    "name": "cust.db.name",
+    "type": "java.lang.String",
+    "description": "A description for 'cust.db.name'"
+  }
+]}

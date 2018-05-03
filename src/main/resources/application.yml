@@ -1,26 +1,26 @@
-# 端口配置
-server:
-  port: 8090
-  
-  
-#################### 数据库配置####################
 spring:
+  # 当前激活的环境配置
+  profiles:
+    active: test
+#################### 数据库配置####################
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     # 添加?autoReconnect=true&useSSL=false去除控制台警告:Establishing SSL connection without server's identity verification is not recommended
-    url: jdbc:mysql://localhost:3306/springboot?useUnicode=yes&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/${cust.db.name}?useUnicode=yes&characterEncoding=UTF-8&autoReconnect=true&useSSL=false
     username: root
     password: root
-    
+# 端口配置
+server:
+  port: 8090
 ################## 日志级别以及路径配置####################
 logging: 
   level: 
     root: INFO
     com.chenqiang.study.controller: INFO
-    com.chenqiang.study.dao: DEBUG
+    com.chenqiang.study.dao: INFO
   file: logs/spring-boot-logging.log
     
- ################# mapper文件配置#####################
+################# mapper文件配置#####################
 mybatis:
   # mapper.xml文件所在位置
   # mapper-locations: classpath:com/chenqiang/study/mapper/*.xml#classpath:/mapper/*.xml
@@ -28,8 +28,7 @@ mybatis:
   # type-aliases-package: com.chenqiang.study.entity
   # mybatis配置文件路径
   config-location: classpath:config/mybatis-config.xml
-  
-  
+
 ################## 用户自定义配置#####################
 cust: 
   pwd: 
@@ -44,3 +43,26 @@ cust:
     publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcDeoixXS61ezgnnFq7uGj6YhtrxPtSyAgb78HyMjDLc4Yup794LMIBpCqcgnqr5Icby82d5ELkabfEuytdYZxwqzQbZx0OgJYvcNBgWjdeQbPotp+3AnRQK+hf9rVh+4JZ4Cp46XhxthphDI6iDLBNVCeq3S0jNQXsGq2qy2HrwIDAQAB
     # 私钥
     privateKey: MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJwN6iLFdLrV7OCecWru4aPpiG2vE+1LICBvvwfIyMMtzhi6nv3gswgGkKpyCeqvkhxvLzZ3kQuRpt8S7K11hnHCrNBtnHQ6Ali9w0GBaN15Bs+i2n7cCdFAr6F/2tWH7glngKnjpeHG2GmEMjqIMsE1UJ6rdLSM1BewararLYevAgMBAAECgYAMGnwtZDkwgIUVytQrIgn4J5XARBL8lZYRTfl4BhekI7pXaqoIMNRR7AhuX9frDuD7OZhk1hM23X4e0R3wOixKKXe8Z/sX63IP8s7iG4m6YtvCvmVEhITR/KmT0SLM5X9zK4WpweCAN8LDKEETt7awFTbk62IK4NTBl2+Q6NPfYQJBAMt1NwQHHvSt5Sku/lBm0iNUthJe/oT4U4KNDoLHY0SKjOEz3+gOWB/+pR4nsI7rEQKg2maM9RnbXnRvzrqDpPECQQDEWs9d0sg5fsmors77Bq58A+k1BVoTAnUOSTrD7qDvg+MeDhJhAw9a2jl+dLUlbcYPlYUzFA4S2F5eODtfk3afAkA3qcf1eCVF99V8YPj+8kKHnAN8HzUvF+lxDDpuGTLVa7qDWnfluxbtGfP+vgkV8MXknDFkYSglfNjorjY23RFhAkBp/uOGMGzprKnLp2IQXJEAXVQczSDMtjzeU2Wnsz+pTDbkWJBPUkmNr9Ptka7f35xVeU+IPUFDpw16KzzR4VbdAkA1G1QReI83sCaNYa7DJmf6iY+41mZqIaLnXwRrdI0WUi/fUR52bshXAkyh0VaqMEcvlDDcbZfW9rEzCTqOQfji
+
+
+---
+
+############################## 开发环境配置#####################################  
+spring:
+  profiles: dev
+
+# 开发环境数据库名
+cust:
+  db:
+    name: springboot
+    
+---
+
+############################ 测试环境配置 ################################ 
+spring:
+  profiles: test
+
+# 开发环境数据库名
+cust:
+  db:
+    name: springboot-test

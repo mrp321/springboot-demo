@@ -15,20 +15,6 @@ import com.chenqiang.study.entity.User;
 public interface UserService {
 
 	/**
-	 * 用户登录
-	 * 
-	 * @author qchen
-	 * @date 2018-4-13
-	 * 
-	 * @param name
-	 *            用户id
-	 * @param pwd
-	 *            密码
-	 * @return
-	 */
-	User login(String userId, String pwd);
-
-	/**
 	 * 添加用户
 	 * 
 	 * @author qchen

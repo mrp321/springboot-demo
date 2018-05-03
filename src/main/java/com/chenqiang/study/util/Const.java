@@ -8,7 +8,7 @@ package com.chenqiang.study.util;
  *
  */
 public class Const {
-	//-------------------------------一般性的常量----------------------------
+	// -------------------------------一般性的常量----------------------------
 	/** session中用户 */
 	public static final String LOGIN_USER = "loginUser";
 	/** 数据库中查询出来的用户 */
@@ -19,7 +19,11 @@ public class Const {
 	public static final String JSON_PATH_DATA = "$.data";
 	/** 接口测试jsonPath取接口返回内容中的msg */
 	public static final String JSON_PATH_MSG = "$.msg";
-	//--------------------------------代码逻辑中的一些标志位-----------------------------------
+	/** 常量-用户id */
+	public static final String USERID = "userId";
+	/** 常量-用户密码 */
+	public static final String PWD = "pwd";
+	// --------------------------------代码逻辑中的一些标志位-----------------------------------
 	/** 指定用户名的用户不存在 */
 	public static final int USER_WITH_NAME_NOT_EXISTS = -2;
 	/** 指定用户名的用户已存在 */
@@ -42,7 +46,7 @@ public class Const {
 	public static final int USER_ACCOUNT_STATUS_NOT_LOCKED = 0;
 	/** 用户账号状态-已锁定 */
 	public static final int USER_ACCOUNT_STATUS_LOCKED = 1;
-	//---------------------------------接口地址--------------------------------------------
+	// ---------------------------------接口地址--------------------------------------------
 	/** 用户登陆url */
 	public static final String URL_LOGIN = "/user/login";
 	/** 用户注销url */
@@ -55,7 +59,7 @@ public class Const {
 	public static final String URL_MODI_USER = "/user/modiUser";
 	/** 用户查询url */
 	public static final String URL_QUERY_USER = "/user/queryUser";
-	//--------------------------------接口返回提示信息--------------------------------------------
+	// --------------------------------接口返回提示信息--------------------------------------------
 	/** 首次登陆时的提示信息 */
 	public static final String MSG_FIRST_LOGIN_MINUS8 = "首次登录,请修改密码";
 	/** 用户锁定时的提示信息 */

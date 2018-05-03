@@ -72,6 +72,8 @@ public class UserController extends CommController {
 				map = this.getFailRtnMap(flag, Const.MSG_PWD_EXPIRED_MINUS7);
 			} else if (flag == Const.USER_WRONG_PWD) {
 				map = this.getFailRtnMap(flag, Const.MSG_PWD_WRONG_MINUS9);
+			} else if (flag == Const.USER_WITH_USERID_NOT_EXISTS) {
+				map = this.getFailRtnMap(flag, Const.MSG_USER_NOT_EXISTS_MINUS4);
 			} else {
 				map = this.getFailRtnMap(flag, Const.MSG_LOGIN_FAIL);
 			}

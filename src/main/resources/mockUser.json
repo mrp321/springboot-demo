@@ -1,0 +1,34 @@
+{
+	"normalUser": {
+		"userId": "admin",
+		"pwd": "admin",
+		"pwdMD5": "21232f297a57a5a743894a0e4a801fc3"
+	},
+	"lockedUser": {
+		"userId": "root",
+		"pwd": "root",
+		"pwdMD5": "63a9f0ea7bb98050796b649e85481845"
+	},
+	"firstLoginUser": {
+		"userId": "user1",
+		"pwd": "user1",
+		"pwdMD5": "24c9e15e52afc47c225b757e7bee1f9d"
+	},
+	"pwdExpiredUser": {
+		"userId": "user2",
+		"pwd": "user2",
+		"pwdMD5": "7e58d63b60197ceb55a1c487989a3720"
+	},
+	"noSuchUser": {
+		"userId": "noSuch",
+		"pwd": "noSuch"
+	},
+	"pwdErrUser": {
+		"userId": "admin",
+		"pwd": "pwdErr"
+	},
+	"newUser": {
+		"userId": "new",
+		"pwd": "new"
+	}
+}

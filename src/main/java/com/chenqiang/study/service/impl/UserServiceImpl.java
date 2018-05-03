@@ -55,23 +55,6 @@ public class UserServiceImpl implements UserService {
 	private String privateKey;
 
 	/**
-	 * 用户登录
-	 * 
-	 * @author qchen
-	 * @date 2018-4-13
-	 * 
-	 * @param name
-	 *            用户id
-	 * @param pwd
-	 *            密码
-	 * @return
-	 */
-	@Override
-	public User login(String userId, String pwd) {
-		return this.userDao.login(userId, pwd);
-	}
-
-	/**
 	 * 添加用户
 	 * 
 	 * @author qchen

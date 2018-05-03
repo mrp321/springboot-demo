@@ -93,6 +93,18 @@ public class User {
 		this.lastLoginDate = lastLoginDate;
 		this.isLock = isLock;
 	}
+	
+	
+/**
+ * 含参构造器
+ * @param userId 用户id
+ * @param pwd 密码
+ */
+	public User(String userId, String pwd) {
+		super();
+		this.userId = userId;
+		this.pwd = pwd;
+	}
 
 	public String getName() {
 		return name;

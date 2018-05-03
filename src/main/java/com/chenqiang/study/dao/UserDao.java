@@ -19,22 +19,6 @@ import com.chenqiang.study.provider.UserProvider;
  * @date 2018-4-13
  */
 public interface UserDao {
-
-	/**
-	 * 登陆
-	 * 
-	 * @author QChen
-	 * @date 2018-4-11
-	 * 
-	 * @param userId
-	 *            用户id
-	 * @param pwd
-	 *            密码
-	 * @return 用户信息
-	 */
-	@Select("SELECT userId, pwd FROM user WHERE userId = #{userId} AND pwd = #{pwd}")
-	public User login(@Param("userId") String userId, @Param("pwd") String pwd);
-
 	/**
 	 * 添加用户
 	 * 
