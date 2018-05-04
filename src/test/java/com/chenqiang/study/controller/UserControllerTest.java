@@ -82,6 +82,10 @@ public class UserControllerTest {
 	 * 新增用户
 	 */
 	private TestUser newUser;
+	/**
+	 * 异常用户
+	 */
+	private TestUser exceptionUser;
 
 	/**
 	 * 進行模擬請求時需要傳入的參數
@@ -108,6 +112,7 @@ public class UserControllerTest {
 		noSuchUser = noSuchUser != null ? noSuchUser : mockUser.getMockUser(MockUser.MOCK_USER_ACCT_NO_SUCH);
 		pwdErrUser = pwdErrUser != null ? pwdErrUser : mockUser.getMockUser(MockUser.MOCK_USER_ACCT_PWD_ERR);
 		newUser = newUser != null ? newUser : mockUser.getMockUser(MockUser.MOCK_USER_ACCT_NEW);
+		exceptionUser = exceptionUser != null ? exceptionUser : mockUser.getMockUser(MockUser.MOCK_USER_ACCT_EXCEPTION);
 		userList.add(normalUser);
 		userList.add(lockedUser);
 		userList.add(firstLoginUser);
@@ -115,6 +120,7 @@ public class UserControllerTest {
 		userList.add(noSuchUser);
 		userList.add(pwdErrUser);
 		userList.add(newUser);
+		// userList.add(exceptionUser);
 		log.info("给所有测试用户进行登录操作,设置session");
 		// 模拟登录,设置session
 		this.setLoginSession4AllUser(userList);
@@ -225,6 +231,11 @@ public class UserControllerTest {
 				new MockHttpSession());
 	}
 
+	/**
+	 * 测试登录失败,密码错误
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testLoginFailPwdErr() throws Exception {
 		log.info("测试登录失败,密码错误");
@@ -232,6 +243,21 @@ public class UserControllerTest {
 		params.add(Const.USERID, pwdErrUser.getUserId());
 		params.add(Const.PWD, pwdErrUser.getPwd());
 		this.perform(HttpMethod.POST, Const.URL_LOGIN, params, Const.JSON_PATH_DATA, Const.USER_WRONG_PWD,
+				new MockHttpSession());
+	}
+
+	/**
+	 * 测试登录失败,发生异常 TODO
+	 * 
+	 * @throws Exception
+	 */
+	// @Test
+	public void testLoginFailException() throws Exception {
+		log.info("测试登录失败,发生异常");
+		params.clear();
+		params.add(Const.USERID, exceptionUser.getPwd());
+		params.add(Const.PWD, exceptionUser.getPwd());
+		this.perform(HttpMethod.POST, Const.URL_LOGIN, params, Const.JSON_PATH_MSG, Const.MSG_LOGIN_FAIL,
 				new MockHttpSession());
 	}
 
@@ -247,6 +273,22 @@ public class UserControllerTest {
 		params.clear();
 		params.add(Const.USERID, normalUser.getUserId());
 		this.perform(HttpMethod.POST, Const.URL_LOGOUT, params, Const.JSON_PATH_SUCCESS, true, normalUser.getSession());
+	}
+
+	/**
+	 * 测试注销失败,发生异常 TODO
+	 * 
+	 * @throws Exception
+	 */
+	// @Test
+	public void testLogoutFailException() throws Exception {
+		log.info("测试注销失败,发生异常");
+		params.clear();
+		// 修改session,使之发生异常
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(exceptionUser.getUserId(), exceptionUser);
+		this.perform(HttpMethod.POST, Const.URL_LOGOUT, params, Const.JSON_PATH_MSG, Const.MSG_EXCEPTION,
+				new MockHttpSession());
 	}
 	// -----------------------------------------------增加接口测试---------------------------------------
 
@@ -305,6 +347,21 @@ public class UserControllerTest {
 		params.add(Const.USERID, normalUser.getUserId());
 		params.add(Const.PWD, normalUser.getPwd());
 		this.perform(HttpMethod.POST, Const.URL_ADD_USER, params, Const.JSON_PATH_MSG, Const.MSG_USER_EXISTS_MINUS5,
+				normalUser.getSession());
+	}
+
+	/**
+	 * 测试增加失败, 发生异常
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testAddUserFailException() throws Exception {
+		log.info("测试增加失败, 发生异常");
+		params.clear();
+		params.add(Const.USERID, exceptionUser.getUserId());
+		params.add(Const.PWD, exceptionUser.getPwd());
+		this.perform(HttpMethod.POST, Const.URL_ADD_USER, params, Const.JSON_PATH_MSG, Const.MSG_EXCEPTION,
 				normalUser.getSession());
 	}
 
@@ -406,6 +463,21 @@ public class UserControllerTest {
 		params.add(Const.PWD, noSuchUser.getPwd());
 		this.perform(HttpMethod.POST, Const.URL_MODI_USER, params, Const.JSON_PATH_MSG,
 				Const.MSG_USER_NOT_EXISTS_MINUS4, normalUser.getSession());
+	}
+
+	/**
+	 * 测试修改失败,发生异常 TODO
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testModiUserFailException() throws Exception {
+		log.info("测试修改失败,发生异常");
+		params.clear();
+		params.add(Const.USERID, normalUser.getUserId());
+		params.add(Const.PWD, exceptionUser.getPwd());
+		this.perform(HttpMethod.POST, Const.URL_MODI_USER, params, Const.JSON_PATH_MSG, Const.MSG_EXCEPTION,
+				normalUser.getSession());
 	}
 
 	// -----------------------------------查询接口测试--------------------------------

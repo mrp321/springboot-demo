@@ -1,7 +1,6 @@
 package com.chenqiang.study.entiy;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,6 +76,10 @@ public class MockUser {
 	 * 测试用户账号类型-新增用户(用于测试addUser接口)
 	 */
 	public static final String MOCK_USER_ACCT_NEW = "newUser";
+	/**
+	 * 测试用户账号类型-异常用户(用于测试接口异常)
+	 */
+	public static final String MOCK_USER_ACCT_EXCEPTION = "exceptionUser";
 
 	@PostConstruct
 	public void init() throws Exception {

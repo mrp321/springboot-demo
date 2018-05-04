@@ -30,5 +30,10 @@
 	"newUser": {
 		"userId": "new",
 		"pwd": "new"
+	},
+	"exceptionUser": {
+		"userId": "exceptionUser",
+		"pwd": "d3fbaf442b5506920da1794ea832f30f",
+		"pwdMD5": "d3fbaf442b5506920da1794ea832f30f"
 	}
 }
