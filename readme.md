@@ -1,24 +1,24 @@
 ## 1. 项目已经实现的功能
-用户登录,注销, 添加用户,删除用户,查询用户,修改用户
+* 用户登录,注销, 添加用户,删除用户,查询用户,修改用户
 
 ## 2. 项目相关文档
-/src/main/resources/相关文档
+* /src/main/resources/相关文档
 
 ## 3. 运行和测试
 ### 3.1. 数据库配置
-运行时,修改`application.yml`中`spring.profiles.active=dev`
-测试时,修改`application.yml`中`spring.profiles.active=test`
+* 运行时,修改`application.yml`中`spring.profiles.active=dev`
+* 测试时,修改`application.yml`中`spring.profiles.active=test`
 
 ### 3.2. 运行
 
-浏览器访问`http://localhost:8090/index.html`
+* 浏览器访问`http://localhost:8090/index.html`
 
 
 ## 4. 相关技术
 
-Springboot
-Mybatis
-Vue.js
+* Springboot
+* Mybatis
+* Vue.js
 
 
 ## 5. 补充:Maven迁移至Gradle(以gradle 4.9为例)
@@ -29,13 +29,13 @@ Vue.js
 
 ### 5.2. 配置gradle环境变量
 
-GRADLE_HOME=D:\develop\gradle-4.9
-Path=...;%GRADLE_HOME%\bin
+* GRADLE_HOME=D:\develop\gradle-4.9
+* Path=...;%GRADLE_HOME%\bin
 
 ### 5.3. 命令行执行`gradlew init`初始化项目
 
 
-### 5.4. 修改gradle构建脚本
+### 5.4. 修改gradle构建脚本,以支持运行springboot项目
 
 `build.gradle`
 
