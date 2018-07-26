@@ -90,4 +90,4 @@ dependencies {
 
 ### 5.5. 命令行执行`gradlew build`构建项目
 
-### 5.6. 命令行执行`gradlew runBoot`启动项目
+### 5.6. 命令行执行`gradlew bootRun`启动项目
